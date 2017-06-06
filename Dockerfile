@@ -27,6 +27,6 @@ RUN npm install sharp --g
 USER root
 
 #Remove compilation libraries
-RUN apk del curl tar alpine-sdk gobject-introspection expat-dev
+RUN apk del curl tar alpine-sdk gtk-doc gobject-introspection expat-dev
 
 ENV NODE_ENV production
