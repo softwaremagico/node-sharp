@@ -15,9 +15,8 @@ RUN apk --no-cache add curl tar alpine-sdk glib-dev gtk-doc gobject-introspectio
 	&& make \
 	&& make install \
 	&& cd / \
-	&& rm -r /usr/src/vips-${VIPS_VERSION}
-
-RUN chown node:node /usr/local/lib/node_modules
+	&& rm -r /usr/src/vips-${VIPS_VERSION} \
+	&& chown node:node /usr/local/lib/node_modules
 
 #User node is defined in node-alpine-edge
 USER node
