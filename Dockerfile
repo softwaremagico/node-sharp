@@ -1,12 +1,29 @@
 FROM jorgehortelano/node-alpine-edge
 
-LABEL Description="Sharp instalation for node"
-      
-# Install packages from testing repo's
-RUN apk add --update --repository http://dl-3.alpinelinux.org/alpine/edge/testing vips-tools \
-    && apk --no-cache add g++ python make gcc
-    && rm -rf /var/cache/apk/*
+LABEL Description="Sharp library compilation and instalation for docker Alpine"
+
+RUN apk --no-cache add curl tar alpine-sdk glib-dev gtk-doc gobject-introspection expat-dev
+
+ENV VIPS_VERSION 8.5.5
+
+#Compile Vips
+RUN mkdir -p /usr/src \
+        && curl -o vips.tar.gz -SL https://github.com/jcupitt/libvips/releases/download/v8.5.5/vips-${VIPS_VERSION}.tar.gz \
+	&& tar -xzf vips.tar.gz -C /usr/src/ \
+	&& rm vips.tar.gz \
+	&& chown -R nobody.nobody /usr/src/vips-${VIPS_VERSION} \
+	&& cd /usr/src/vips-${VIPS_VERSION} \
+	&& ./configure \
+	&& make \
+	&& make install 
+
+RUN chown node:node /usr/local/lib/node_modules
+
+USER node
       
 RUN npm install sharp --g 
    
-RUN apk del make gcc g++ python
+USER root
+RUN apk del make curl tar alpine-sdk glib-dev gtk-doc gobject-introspection expat-dev
+
+ENV NODE_ENV production
